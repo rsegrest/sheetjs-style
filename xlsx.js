@@ -9197,6 +9197,8 @@ var STYLES_XML_ROOT = writextag('styleSheet', null, {
 
 RELS.STY = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles";
 
+let style_builder;
+
 function write_sty_xml(wb, opts) {
 	if (typeof style_builder != 'undefined' && typeof 'require' != 'undefined') {
     return style_builder.toXml();
@@ -21521,10 +21523,11 @@ var XmlNode = (function () {
     return this;
   }
 
-  var APOS = "'"; QUOTE = '"'
-  var ESCAPED_QUOTE = {  }
-  ESCAPED_QUOTE[QUOTE] = '&quot;'
-  ESCAPED_QUOTE[APOS] = '&apos;'
+  var APOS = "'";
+  var QUOTE = '"';
+  var ESCAPED_QUOTE = {  };
+  ESCAPED_QUOTE[QUOTE] = '&quot;';
+  ESCAPED_QUOTE[APOS] = '&apos;';
 
   XmlNode.prototype.escapeAttributeValue = function(att_value) {
     return '"' + att_value.replace(/\"/g,'&quot;') + '"';// TODO Extend with four other codes
@@ -21600,8 +21603,8 @@ var StyleBuilder = function (options) {
 
 
 	// cache style specs to avoid excessive duplication
-	_hashIndex = {};
-	_listIndex = [];
+	let _hashIndex = {};
+	// let _listIndex = [];
 
 	return {
 
