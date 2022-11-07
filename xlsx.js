@@ -1,7 +1,7 @@
+/* eslint-disable */
 /*! xlsx.js (C) 2013-present SheetJS -- http://sheetjs.com */
 /* vim: set ts=2: */
 /*exported XLSX */
-/*global global, exports, module, require:false, process:false, Buffer:false, ArrayBuffer:false */
 var XLSX = {};
 function make_xlsx_lib(XLSX){
 XLSX.version = '0.15.6';
@@ -1159,7 +1159,6 @@ var CRC32;
 }(function(CRC32) {
 CRC32.version = '1.2.0';
 /* see perf/crc32table.js */
-/*global Int32Array */
 function signed_crc_table() {
 	var c = 0, table = new Array(256);
 
@@ -2593,18 +2592,21 @@ function blobify(data) {
 }
 /* write or download file */
 function write_dl(fname, payload, enc) {
-	/*global IE_SaveFile, Blob, navigator, saveAs, document, File, chrome */
 	if(typeof _fs !== 'undefined' && _fs.writeFileSync) return enc ? _fs.writeFileSync(fname, payload, enc) : _fs.writeFileSync(fname, payload);
 	var data = (enc == "utf8") ? utf8write(payload) : payload;
+// eslint-disable-next-line no-undef
 if(typeof IE_SaveFile !== 'undefined') return IE_SaveFile(data, fname);
 	if(typeof Blob !== 'undefined') {
 		var blob = new Blob([blobify(data)], {type:"application/octet-stream"});
 if(typeof navigator !== 'undefined' && navigator.msSaveBlob) return navigator.msSaveBlob(blob, fname);
+// eslint-disable-next-line no-undef
 if(typeof saveAs !== 'undefined') return saveAs(blob, fname);
 		if(typeof URL !== 'undefined' && typeof document !== 'undefined' && document.createElement && URL.createObjectURL) {
 			var url = URL.createObjectURL(blob);
+// eslint-disable-next-line no-undef
 if(typeof chrome === 'object' && typeof (chrome.downloads||{}).download == "function") {
 				if(URL.revokeObjectURL && typeof setTimeout !== 'undefined') setTimeout(function() { URL.revokeObjectURL(url); }, 60000);
+				// eslint-disable-next-line no-undef
 				return chrome.downloads.download({ url: url, filename: fname, saveAs: true});
 			}
 			var a = document.createElement("a");
@@ -3547,7 +3549,6 @@ var make_offcrypto = function(O, _crypto) {
 		return crypto.createHash('md5').update(hex).digest('hex');
 	};
 };
-/*global crypto:true */
 make_offcrypto(OFFCRYPTO, typeof crypto !== "undefined" ? crypto : undefined);
 
 function decode_row(rowstr) { return parseInt(unfix_row(rowstr),10) - 1; }
@@ -6510,7 +6511,11 @@ try {
 	var ot = (opts.lastobj||{cmo:[0,0]}).cmo[1];
 	var controlInfo; // eslint-disable-line no-unused-vars
 	if([0,5,7,11,12,14].indexOf(ot) == -1) blob.l += 6;
-	else controlInfo = parse_ControlInfo(blob, 6, opts);
+// eslint-disable-line no-unused-vars
+	else {
+		// controlInfo =
+		parse_ControlInfo(blob, 6, opts);
+	}
 	var cchText = blob.read_shift(2);
 	/*var cbRuns = */blob.read_shift(2);
 	/*var ifntEmpty = */parseuint16(blob, 2);
@@ -12912,7 +12917,6 @@ RELS.WS = [
 	"http://purl.oclc.org/ooxml/officeDocument/relationships/worksheet"
 ];
 
-/*global Map */
 var browser_has_Map = typeof Map !== 'undefined';
 
 function get_sst_id(sst, str, rev) {
@@ -12968,8 +12972,8 @@ function default_margins(margins, mode) {
 
 function get_cell_style(styles, cell, opts) {
 	if (typeof style_builder != 'undefined') {
-    if (/^\d+$/.exec(cell.s)) { return cell.s}  // if its already an integer index, let it be
-    if (cell.s && (cell.s == +cell.s)) { return cell.s}  // if its already an integer index, let it be
+    if (/^\d+$/.exec(cell.s)) { return cell.s; }  // if its already an integer index, let it be
+    if (cell.s && (cell.s == +cell.s)) { return cell.s; }  // if its already an integer index, let it be
     var s = cell.s || {};
     if (cell.z) s.numFmt = cell.z;
     return style_builder.addStyle(s);
@@ -15772,7 +15776,9 @@ for(var cma = c; cma <= cc; ++cma) {
 			if(Rn[1]==='/'){if((tmp=state.pop())[0]!==Rn[3]) throw new Error("Bad state: "+tmp.join("|"));}
 			else if(Rn[0].slice(-2) == "/>") break;
 			else {
-				table = xlml_parsexmltag(Rn[0]);
+// eslint-disable-line no-unused-vars
+				// table =
+				xlml_parsexmltag(Rn[0]);
 				state.push([Rn[3], false]);
 				cstys = []; seencol = false;
 			}
@@ -17040,7 +17046,7 @@ wb.opts.Date1904 = Workbook.WBProps.date1904 = val; break;
 					objects = [];
 					opts.arrayf = arrayf = [];
 					colinfo = []; rowinfo = [];
-					defwidth = defheight = 0;
+					// defwidth = defheight = 0;
 					seencol = false;
 					wsprops = {Hidden:(Directory[s]||{hs:0}).hs, name:cur_sheet };
 				} break;
@@ -17225,9 +17231,12 @@ wb.opts.Date1904 = Workbook.WBProps.date1904 = val; break;
 				default: switch(R.n) { /* nested */
 				case 'ClrtClient': break;
 				case 'XFExt': update_xfext(XFs[val.ixfe], val.ext); break;
-
-				case 'DefColWidth': defwidth = val; break;
-				case 'DefaultRowHeight': defheight = val[1]; break; // TODO: flags
+				// case 'DefColWidth':
+					// defwidth = val;
+					// break;
+				// case 'DefaultRowHeight':
+				// 	defheight = val[1];
+				// 	break; // TODO: flags
 
 				case 'ColInfo': {
 					if(!opts.cellStyles) break;
@@ -19466,7 +19475,6 @@ function is_dom_element_hidden(element) {
 	return display === 'none';
 }
 
-/* global getComputedStyle */
 function get_get_computed_style_function(element) {
 	// The proper getComputedStyle implementation is the one defined in the element window
 	if(element.ownerDocument.defaultView && typeof element.ownerDocument.defaultView.getComputedStyle === 'function') return element.ownerDocument.defaultView.getComputedStyle;
@@ -21483,23 +21491,23 @@ var XmlNode = (function () {
   }
 
   XmlNode.prototype.createElement = function () {
-    return new XmlNode(arguments)
-  }
+    return new XmlNode(arguments);
+  };
 
   XmlNode.prototype.children = function() {
     return this._children;
-  }
+  };
 
   XmlNode.prototype.append = function (node) {
     this._children.push(node);
     return this;
-  }
+  };
 
   XmlNode.prototype.prefix = function (prefix) {
     if (arguments.length==0) { return this._prefix;}
     this._prefix = prefix;
     return this;
-  }
+  };
 
   XmlNode.prototype.attr = function (attr, value) {
     if (value == undefined) {
@@ -21521,7 +21529,7 @@ var XmlNode = (function () {
       this._attributes[attr] = value;
     }
     return this;
-  }
+  };
 
   var APOS = "'";
   var QUOTE = '"';
@@ -21532,7 +21540,7 @@ var XmlNode = (function () {
   XmlNode.prototype.escapeAttributeValue = function(att_value) {
     return '"' + att_value.replace(/\"/g,'&quot;') + '"';// TODO Extend with four other codes
 
-  }
+  };
 
   XmlNode.prototype.toXml = function (node) {
     if (!node) node = this;
@@ -21540,7 +21548,7 @@ var XmlNode = (function () {
     xml += '<' + node.tagName;
     if (node._attributes) {
       for (var key in node._attributes) {
-        xml += ' ' + key + '=' + this.escapeAttributeValue(''+node._attributes[key]) + ''
+        xml += ' ' + key + '=' + this.escapeAttributeValue(''+node._attributes[key]) + '';
       }
     }
     if (node._children && node._children.length > 0) {
@@ -21554,7 +21562,7 @@ var XmlNode = (function () {
       xml += '/>';
     }
     return xml;
-  }
+  };
   return XmlNode;
 })();
 /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -21632,7 +21640,7 @@ var StyleBuilder = function (options) {
 			this.$tableStyles = XmlNode('tableStyles')
 					.attr('count','0')
 					.attr('defaultTableStyle','TableStyleMedium9')
-					.attr('defaultPivotStyle','PivotStyleMedium4')
+					.attr('defaultPivotStyle','PivotStyleMedium4');
 
 
 			this.$styles = XmlNode('styleSheet')
@@ -21666,7 +21674,7 @@ var StyleBuilder = function (options) {
 			this.defaultStyle = defaultStyle;
 
 			var gray125Style = JSON.parse(JSON.stringify(defaultStyle));
-			gray125Style.fill = {patternType: "gray125", fgColor: { }}
+			gray125Style.fill = {patternType: "gray125", fgColor: { }};
 
 			this.addStyles([defaultStyle, gray125Style]);
 			return this;
@@ -21694,7 +21702,7 @@ var StyleBuilder = function (options) {
 			var self = this;
 			return styles.map(function (style) {
 				return self.addStyle(style);
-			})
+			});
 		},
 
 		_duckTypeStyle: function(attributes) {
@@ -21706,7 +21714,7 @@ var StyleBuilder = function (options) {
 				return attributes;
 			}
 			else {
-				return this._getStyleCSS(attributes)
+				return this._getStyleCSS(attributes);
 			}
 		},
 
@@ -21754,7 +21762,7 @@ var StyleBuilder = function (options) {
 				if (attributes.alignment.wrapText)  { $alignment.attr('wrapText', attributes.alignment.wrapText);}
 				if (attributes.alignment.textRotation!=undefined)  { $alignment.attr('textRotation', attributes.alignment.textRotation);}
 
-				$xf.append($alignment).attr('applyAlignment',1)
+				$xf.append($alignment).attr('applyAlignment',1);
 
 			}
 			this.$cellXfs.append($xf);
@@ -21770,7 +21778,7 @@ var StyleBuilder = function (options) {
 
 			var $font = XmlNode('font')
 					.append(XmlNode('sz').attr('val', attributes.sz || this.defaultStyle.font.sz))
-					.append(XmlNode('name').attr('val', attributes.name || this.defaultStyle.font.name))
+					.append(XmlNode('name').attr('val', attributes.name || this.defaultStyle.font.name));
 
 			if (attributes.bold) $font.append(XmlNode('b'));
 			if (attributes.underline)  $font.append(XmlNode('u'));
@@ -21780,20 +21788,20 @@ var StyleBuilder = function (options) {
 			if (attributes.shadow)  $font.append(XmlNode('shadow'));
 
 			if (attributes.vertAlign) {
-				$font.append(XmlNode('vertAlign').attr('val', attributes.vertAlign))
+				$font.append(XmlNode('vertAlign').attr('val', attributes.vertAlign));
 			}
 
 
 			if (attributes.color) {
 				if (attributes.color.theme) {
-					$font.append(XmlNode('color').attr('theme', attributes.color.theme))
+					$font.append(XmlNode('color').attr('theme', attributes.color.theme));
 
 					if (attributes.color.tint) { //tint only if theme
-						$font.append(XmlNode('tint').attr('theme', attributes.color.tint))
+						$font.append(XmlNode('tint').attr('theme', attributes.color.tint));
 					}
 
 				} else if (attributes.color.rgb) { // not both rgb and theme
-					$font.append(XmlNode('color').attr('rgb', attributes.color.rgb))
+					$font.append(XmlNode('color').attr('rgb', attributes.color.rgb));
 				}
 			}
 
@@ -21850,7 +21858,7 @@ var StyleBuilder = function (options) {
 				if (attributes.fgColor.rgb) {
 
 					if (attributes.fgColor.rgb.length == 6) {
-						attributes.fgColor.rgb = "FF" + attributes.fgColor.rgb /// add alpha to an RGB as Excel expects aRGB
+						attributes.fgColor.rgb = "FF" + attributes.fgColor.rgb; /// add alpha to an RGB as Excel expects aRGB
 					}
 
 					$fgColor.attr('rgb', attributes.fgColor.rgb);
@@ -21865,7 +21873,7 @@ var StyleBuilder = function (options) {
 				}
 
 				if (!attributes.bgColor) {
-					attributes.bgColor = { "indexed": "64"}
+					attributes.bgColor = { "indexed": "64"};
 				}
 			}
 
@@ -21901,7 +21909,7 @@ var StyleBuilder = function (options) {
 						$color.attr('theme', spec.color.theme || "1");
 						$color.attr('tint', spec.color.tint || "0");
 					}
-					$direction.append($color)
+					$direction.append($color);
 				}
 			}
 			return $direction;
@@ -21919,7 +21927,7 @@ var StyleBuilder = function (options) {
 			var directions = ["left","right","top","bottom","diagonal"];
 
 			directions.forEach(function(direction) {
-				$border.append(self._getSubBorder(direction, attributes[direction]))
+				$border.append(self._getSubBorder(direction, attributes[direction]));
 			});
 			this.$borders.append($border);
 
@@ -21932,7 +21940,7 @@ var StyleBuilder = function (options) {
 			return this.$styles.toXml();
 		}
 	}.initialize(options||{});
-}
+};
 
 
 if(typeof parse_xlscfb !== "undefined") XLSX.parse_xlscfb = parse_xlscfb;

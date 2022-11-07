@@ -1,3 +1,4 @@
+/* eslint-disable */
 /* cpexcel.js (C) 2013-present SheetJS -- http://sheetjs.com */
 /*jshint -W100 */
 var cptable = {version:"1.14.0"};
@@ -981,7 +982,6 @@ if (typeof module !== 'undefined' && module.exports && typeof DO_NOT_EXPORT_CODE
 (function(root, factory) {
   /*jshint ignore:start */
   /*eslint-disable */
-  "use strict";
   if(typeof cptable === "undefined") {
     if(typeof require !== "undefined"){
       var cpt = cptable;
@@ -993,7 +993,6 @@ if (typeof module !== 'undefined' && module.exports && typeof DO_NOT_EXPORT_CODE
   /*jshint ignore:end */
 }(this, function(cpt){
   "use strict";
-  /*global module, Buffer */
   var magic = {
     "1200":"utf16le",
     "1201":"utf16be",
@@ -1180,7 +1179,7 @@ if (typeof module !== 'undefined' && module.exports && typeof DO_NOT_EXPORT_CODE
       var len = data.length, w = 0, ww = 0;
       if(4 * len > mdl) { mdl = 4 * len; mdb = Buffer.allocUnsafe(mdl); }
       var i = 0;
-      if(len >= 3 && data[0] == 0xEF) if(data[1] == 0xBB && data[2] == 0xBF) i = 3;
+      if(len >= 3 && data[0] === 0xEF) if(data[1] === 0xBB && data[2] === 0xBF) i = 3;
       for(var j = 1, k = 0, D = 0; i < len; i+=j) {
         j = 1; D = data[i];
         if(D < 128) w = D;
@@ -1376,7 +1375,7 @@ if (typeof module !== 'undefined' && module.exports && typeof DO_NOT_EXPORT_CODE
     }
     else throw new Error("Unrecognized CP: " + cp);
     out = out.slice(0,j);
-    if(!has_buf) return (ofmt == 'str') ? (out).map(sfcc).join("") : out;
+    if(!has_buf) return (ofmt === 'str') ? (out).map(sfcc).join("") : out;
     if(!ofmt || ofmt === 'buf') return out;
     if(ofmt !== 'arr') return out.toString('binary');
     return [].slice.call(out);
@@ -1400,7 +1399,7 @@ if (typeof module !== 'undefined' && module.exports && typeof DO_NOT_EXPORT_CODE
     }
     else if((M=magic[cp])) switch(M) {
       case "utf8":
-        if(len >= 3 && data[0] == 0xEF) if(data[1] == 0xBB && data[2] == 0xBF) i = 3;
+        if(len >= 3 && data[0] === 0xEF) if(data[1] === 0xBB && data[2] === 0xBF) i = 3;
         for(; i < len; i+=j) {
           j = 1;
           if(data[i] < 128) w = data[i];
@@ -1419,7 +1418,7 @@ if (typeof module !== 'undefined' && module.exports && typeof DO_NOT_EXPORT_CODE
         for(i = 0; i < len; i++) out[i] = String.fromCharCode(data[i]);
         k = len; break;
       case "utf16le":
-        if(len >= 2 && data[0] == 0xFF) if(data[1] == 0xFE) i = 2;
+        if(len >= 2 && data[0] === 0xFF) if(data[1] === 0xFE) i = 2;
         if(has_buf && Buffer.isBuffer(data)) return data.toString(M);
         j = 2;
         for(; i+1 < len; i+=j) {
@@ -1427,14 +1426,14 @@ if (typeof module !== 'undefined' && module.exports && typeof DO_NOT_EXPORT_CODE
         }
         break;
       case "utf16be":
-        if(len >= 2 && data[0] == 0xFE) if(data[1] == 0xFF) i = 2;
+        if(len >= 2 && data[0] === 0xFE) if(data[1] === 0xFF) i = 2;
         j = 2;
         for(; i+1 < len; i+=j) {
           out[k++] = String.fromCharCode((data[i]<<8) + data[i+1]);
         }
         break;
       case "utf32le":
-        if(len >= 4 && data[0] == 0xFF) if(data[1] == 0xFE && data[2] === 0 && data[3] === 0) i = 4;
+        if(len >= 4 && data[0] === 0xFF) if(data[1] === 0xFE && data[2] === 0 && data[3] === 0) i = 4;
         j = 4;
         for(; i < len; i+=j) {
           w = (data[i+3]<<24) + (data[i+2]<<16) + (data[i+1]<<8) + (data[i]);
@@ -1447,7 +1446,7 @@ if (typeof module !== 'undefined' && module.exports && typeof DO_NOT_EXPORT_CODE
         }
         break;
       case "utf32be":
-        if(len >= 4 && data[3] == 0xFF) if(data[2] == 0xFE && data[1] === 0 && data[0] === 0) i = 4;
+        if(len >= 4 && data[3] === 0xFF) if(data[2] === 0xFE && data[1] === 0 && data[0] === 0) i = 4;
         j = 4;
         for(; i < len; i+=j) {
           w = (data[i]<<24) + (data[i+1]<<16) + (data[i+2]<<8) + (data[i+3]);
@@ -1460,9 +1459,9 @@ if (typeof module !== 'undefined' && module.exports && typeof DO_NOT_EXPORT_CODE
         }
         break;
       case "utf7":
-        if(len >= 4 && data[0] == 0x2B && data[1] == 0x2F && data[2] == 0x76) {
-          if(len >= 5 && data[3] == 0x38 && data[4] == 0x2D) i = 5;
-          else if(data[3] == 0x38 || data[3] == 0x39 || data[3] == 0x2B || data[3] == 0x2F) i = 4;
+        if(len >= 4 && data[0] === 0x2B && data[1] === 0x2F && data[2] === 0x76) {
+          if(len >= 5 && data[3] === 0x38 && data[4] === 0x2D) i = 5;
+          else if(data[3] === 0x38 || data[3] === 0x39 || data[3] === 0x2B || data[3] === 0x2F) i = 4;
         }
         for(; i < len; i+=j) {
           if(data[i] !== 0x2b) { j=1; out[k++] = String.fromCharCode(data[i]); continue; }
